@@ -1,3 +1,4 @@
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/1tfxOnrV)
 # FIT4012 - Lab 8 - Xây dựng ứng dụng truyền dữ liệu an toàn
 
 Repo starter kit này dùng cho **Lab 8**: xây dựng chương trình truyền dữ liệu an toàn qua **TCP socket** bằng mô hình lai:
