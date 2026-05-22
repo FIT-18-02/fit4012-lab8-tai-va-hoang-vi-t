@@ -15,21 +15,20 @@ Lab 8 kế thừa cách tổ chức repo của Lab 6 socket starter, nhưng thay
 
 ## Team members
 
-- **Thành viên 1**: TODO_MEMBER_1 - MSSV: TODO_MEMBER_1_ID
-- **Thành viên 2**: TODO_MEMBER_2 - MSSV: TODO_MEMBER_2_ID
+- **Thành viên 1**: BUIVANTAI_1 - MSSV: 1871020515_ID
+- **Thành viên 2**: NGUYENHOANGVIET_2 - MSSV: 1871020654_ID
 
 ## Task division
 
-- **Thành viên 1 phụ trách chính**: TODO_ROLE_MEMBER_1
-- **Thành viên 2 phụ trách chính**: TODO_ROLE_MEMBER_2
-- **Phần làm chung**: TODO_SHARED_WORK
+- **Thành viên 1 phụ trách chính**: BUIVANTAI_1
+- **Thành viên 2 phụ trách chính**: NGUYỄN HOÀNG VIỆT_2
+- **Phần làm chung**: CẢ NHÓM 
 
 ## Demo roles
 
-- **Demo Sender / mã hóa / log gửi**: TODO_DEMO_ROLE_1
-- **Demo Receiver / giải mã / kiểm tra hash**: TODO_DEMO_ROLE_2
-- **Cả hai cùng trả lời câu hỏi mở rộng AES và chữ ký số**: TODO_DEMO_ROLE_SHARED
-
+- **Demo Sender / mã hóa / log gửi**: BUIVANTAI
+- **Demo Receiver / giải mã / kiểm tra hash**: NGUYENHOANGVIET
+- **Cả hai cùng trả lời câu hỏi mở rộng AES và chữ ký số**: CẢ NHÓM 
 ---
 
 ## Mục tiêu học tập
