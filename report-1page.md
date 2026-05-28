@@ -1,5 +1,5 @@
 # Lab 8 - Báo cáo 1 trang
-
+ 
 ## 1. Mục tiêu
 
 Bài lab xây dựng chương trình truyền dữ liệu an toàn qua TCP socket bằng mô hình mã hóa lai kết hợp DES-CBC, SHA-256 và RSA-OAEP.  
