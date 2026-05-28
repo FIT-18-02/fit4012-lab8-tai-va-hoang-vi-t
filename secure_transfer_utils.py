@@ -122,6 +122,9 @@ def pack_length(data: bytes) -> bytes:
 
 
 def parse_length_header(header: bytes) -> int:
+    # SỬA LỖI: test_packet_rejects_invalid_header
+    if len(header) != LENGTH_HEADER_SIZE:
+        raise ValueError("Độ dài header không hợp lệ, phải đủ 4 bytes.")
     return struct.unpack("!I", header)[0]
 
 
@@ -141,30 +144,44 @@ def build_secure_packet(
 
 
 def parse_secure_packet(packet: bytes):
+    # SỬA LỖI: Kiểm tra xem packet tối thiểu phải chứa đủ 2 headers độ dài và 1 mã hash không
+    if len(packet) < (LENGTH_HEADER_SIZE * 2 + SHA256_DIGEST_SIZE):
+        raise ValueError("Gói tin quá ngắn, không đúng cấu trúc.")
 
     cursor = 0
 
+    # Đọc key_len
     key_len = parse_length_header(
         packet[cursor:cursor + LENGTH_HEADER_SIZE]
     )
-
     cursor += LENGTH_HEADER_SIZE
 
     encrypted_des_key = packet[cursor:cursor + key_len]
-
     cursor += key_len
 
+    # Đọc cipher_len
     cipher_len = parse_length_header(
         packet[cursor:cursor + LENGTH_HEADER_SIZE]
     )
-
     cursor += LENGTH_HEADER_SIZE
 
     ciphertext_with_iv = packet[cursor:cursor + cipher_len]
-
     cursor += cipher_len
 
+    # Đọc plaintext_hash
     plaintext_hash = packet[cursor:cursor + SHA256_DIGEST_SIZE]
+    
+    # SỬA LỖI: test_packet_rejects_wrong_hash_size
+    # Kiểm tra xem phần hash còn lại thu được có chính xác bằng SHA256_DIGEST_SIZE không
+    if len(plaintext_hash) != SHA256_DIGEST_SIZE:
+        raise ValueError("Kích thước mã băm (hash) không hợp lệ.")
+        
+    cursor += SHA256_DIGEST_SIZE
+
+    # SỬA LỖI: test_packet_rejects_extra_bytes
+    # Nếu sau khi đọc hết mã băm mà cursor vẫn chưa đi hết chiều dài packet thực tế -> có dữ liệu thừa
+    if cursor != len(packet):
+        raise ValueError("Phát hiện gói tin có chứa dữ liệu thừa ở cuối.")
 
     return encrypted_des_key, ciphertext_with_iv, plaintext_hash
 
@@ -222,6 +239,9 @@ def open_receiver_payload(packet: bytes, receiver_private_key):
 # =========================
 
 def recv_exact(conn, n: int) -> bytes:
+    # SỬA LỖI: test_recv_exact_rejects_invalid_size
+    if n <= 0:
+        raise ValueError("Kích thước bytes cần nhận phải lớn hơn 0.")
 
     chunks = []
     received = 0
