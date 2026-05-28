@@ -132,6 +132,9 @@ def build_secure_packet(
     ciphertext_with_iv: bytes,
     plaintext_hash: bytes,
 ) -> bytes:
+    # CHỐT CHẶN 1: Bắt lỗi ngay khi đóng gói nếu bài test cố tình đưa hash sai kích thước vào
+    if len(plaintext_hash) != SHA256_DIGEST_SIZE:
+        raise ValueError("Kích thước mã băm (hash) đầu vào để đóng gói không hợp lệ.")
 
     return (
         pack_length(encrypted_des_key)
@@ -143,7 +146,6 @@ def build_secure_packet(
 
 
 def parse_secure_packet(packet: bytes):
-    # Kiểm tra gói tin tối thiểu phải chứa đủ các phần cố định cơ bản (2 headers độ dài)
     if len(packet) < (LENGTH_HEADER_SIZE * 2):
         raise ValueError("Gói tin quá ngắn, không đúng cấu trúc.")
 
@@ -155,15 +157,12 @@ def parse_secure_packet(packet: bytes):
     )
     cursor += LENGTH_HEADER_SIZE
 
-    # Kiểm tra xem gói tin thực tế có đủ độ dài để chứa key bí mật không
-    if len(packet) < cursor + key_len:
-        raise ValueError("Gói tin bị thiếu dữ liệu encrypted_des_key.")
-        
     encrypted_des_key = packet[cursor:cursor + key_len]
+    if len(encrypted_des_key) != key_len:
+        raise ValueError("Dữ liệu encrypted_des_key bị thiếu hoặc không khớp độ dài.")
     cursor += key_len
 
     # 2. Đọc cipher_len
-    # Kiểm tra xem còn đủ 4 bytes để đọc header tiếp theo không
     if len(packet) < cursor + LENGTH_HEADER_SIZE:
         raise ValueError("Gói tin bị cắt ngắn trước khi đọc cipher_len header.")
         
@@ -172,20 +171,17 @@ def parse_secure_packet(packet: bytes):
     )
     cursor += LENGTH_HEADER_SIZE
 
-    # Kiểm tra xem gói tin thực tế có đủ độ dài để chứa ciphertext không
-    if len(packet) < cursor + cipher_len:
-        raise ValueError("Gói tin bị thiếu dữ liệu ciphertext.")
-        
     ciphertext_with_iv = packet[cursor:cursor + cipher_len]
+    if len(ciphertext_with_iv) != cipher_len:
+        raise ValueError("Dữ liệu ciphertext bị thiếu hoặc không khớp độ dài.")
     cursor += cipher_len
 
-    # 3. Đọc plaintext_hash phần còn lại
+    # 3. Lấy toàn bộ phần đuôi còn lại làm plaintext_hash
     plaintext_hash = packet[cursor:]
     
-    # ĐIỀU KIỆN QUYẾT ĐỊNH: Bắt buộc kích thước của hash phải chuẩn xác bằng 32 bytes (SHA-256)
-    # Bất kể gói tin bị thừa (extra bytes) hay thiếu (wrong hash size) đều bị bắt ở đây
+    # CHỐT CHẶN 2: Kiểm tra kích thước hash lúc giải mã
     if len(plaintext_hash) != SHA256_DIGEST_SIZE:
-        raise ValueError("Kích thước mã băm (hash) không hợp lệ, phải chính xác là 32 bytes.")
+        raise ValueError("Kích thước mã băm (hash) giải mã không hợp lệ, phải chính xác là 32 bytes.")
 
     return encrypted_des_key, ciphertext_with_iv, plaintext_hash
 
@@ -234,6 +230,10 @@ def open_receiver_payload(packet: bytes, receiver_private_key):
     )
 
     calculated_hash = sha256_digest(plaintext)
+    
+    # CHỐT CHẶN 3: Đảm bảo nếu vì lý do nào đó lọt lưới, việc hash không khớp hoặc sai logic vẫn ném ValueError
+    if calculated_hash != received_hash:
+        raise ValueError("Mã băm không khớp, dữ liệu có thể đã bị chỉnh sửa.")
 
     return plaintext, calculated_hash == received_hash
 
