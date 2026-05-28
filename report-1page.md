@@ -3,7 +3,7 @@
 ## 1. Mục tiêu
 
 Bài lab xây dựng chương trình truyền dữ liệu an toàn qua TCP socket bằng mô hình mã hóa lai kết hợp DES-CBC, SHA-256 và RSA-OAEP.  
-
+ 
 Mục tiêu chính là:
 - bảo mật nội dung dữ liệu truyền đi,
 - kiểm tra tính toàn vẹn dữ liệu,
