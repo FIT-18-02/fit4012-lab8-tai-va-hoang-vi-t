@@ -1,2 +1,3 @@
 Xin chào FIT4012!
 Đây là bản tin mẫu cho Lab 8: DES-CBC + SHA-256 + RSA-OAEP qua socket.
+ 
